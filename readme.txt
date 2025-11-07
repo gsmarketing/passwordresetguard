@@ -9,11 +9,11 @@ Stable tag: 0.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Lightweight CAPTCHA protection against password reset spam and bot attacks.
+Lightweight CAPTCHA-esque protection against password reset spam and bot attacks.
 
 == Description ==
 
-Password Reset Guard is a lightweight WordPress plugin that protects your site from password reset spam attacks using a simple native math CAPTCHA.
+Password Reset Guard is a lightweight WordPress plugin that protects your site from password reset spam attacks using a simple native math CAPTCHA like feature.
 
 Attackers use bots to flood WordPress sites with hundreds of password reset requests, which can:
 - Overload your email server

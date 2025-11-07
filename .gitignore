@@ -26,3 +26,13 @@ node_modules/
 cursor/
 cursor-rules.md
 .cursor/
+.claude/
+
+# AI Development Files
+CLAUDE.md
+
+# Docker Local Development
+.docker-compose.env
+docker/volumes/
+mysql_data/
+wp_data/
