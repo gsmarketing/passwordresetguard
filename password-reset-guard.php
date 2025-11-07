@@ -320,14 +320,18 @@ class Password_Reset_Guard {
 	 */
 	private function is_password_reset_page() {
 		// Check if we're on the lost password page via URL parameter.
-		// No nonce needed - this is just page detection, not form processing.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		// No nonce needed - this is just page context detection via URL, not form processing.
+		// We're not taking action on this data, just determining if we should load CAPTCHA hooks.
 		if ( isset( $_GET['action'] ) && 'lostpassword' === sanitize_key( $_GET['action'] ) ) {
 			return true;
 		}
 
 		// Check if we're processing a password reset form submission.
-		// No nonce needed - this is just page detection, not form processing.
-		// Actual nonce verification happens in validate_captcha().
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing
+		// No nonce needed - this is just page context detection, not form processing.
+		// We're only checking for the presence of WordPress's built-in form fields
+		// to detect the password reset page. Actual nonce verification happens in validate_captcha().
 		if ( isset( $_POST['wp-submit'] ) && isset( $_POST['user_login'] ) ) {
 			return true;
 		}

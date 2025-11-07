@@ -123,10 +123,10 @@ Visit the GitHub repository and open an issue with:
 = Changelog =
 
 = 0.1.2 =
-* Security: Implement proper nonce sanitization with wp_unslash() before verification
-* Refactor: Remove phpcs ignore comments in favor of clear documentation
-* Code quality: Add detailed comments explaining security-critical code paths
-* Improve: Document why certain nonce checks are not needed in page detection
+* Security: Implement proper nonce sanitization with wp_unslash() before wp_verify_nonce()
+* Code quality: Add justification comments for intentional phpcs ignores
+* Improve: Document page detection logic that doesn't require nonce verification
+* Note: Page context detection in is_password_reset_page() only checks for WordPress form field presence, actual security validation happens in validate_captcha()
 
 = 0.1.1 =
 * Security: Add nonce verification to CAPTCHA form (WordPress security best practices)
