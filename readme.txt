@@ -1,11 +1,11 @@
 === Password Reset Guard ===
-Contributors: garysmith
-Donate link: https://yourwebsite.com/donate
+Contributors: gsmarketing
+Donate link: https://github.com/gsmarketing/passwordresetguard/
 Tags: captcha, password-reset, security, spam-protection, bot-protection
 Requires at least: 4.9
 Requires PHP: 5.6
 Tested up to: 6.4
-Stable tag: 1.0.0
+Stable tag: 0.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -122,7 +122,7 @@ Visit the GitHub repository and open an issue with:
 
 = Changelog =
 
-= 1.0.0 =
+= 0.1.0 =
 * Initial release
 * Math CAPTCHA with three difficulty levels (Easy, Medium, Hard)
 * Admin settings page for configuration

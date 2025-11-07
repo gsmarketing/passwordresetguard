@@ -5,7 +5,7 @@
   "main": "password-reset-guard.php",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/password-reset-guard.git"
+    "url": "https://github.com/gsmarketing/passwordresetguard.git"
   },
   "scripts": {
     "build": "echo \"No build step required for this plugin\"",
@@ -20,7 +20,7 @@
     "spam-protection",
     "bot-protection"
   ],
-  "author": "Your Name",
+  "author": "Gary Smith Marketing, LLC",
   "license": "GPL-2.0-or-later",
   "engines": {
     "node": ">=12.0.0",

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Password Reset Guard
  * Description: Lightweight CAPTCHA protection against password reset spam and bot attacks
- * Version: 1.0.0
+ * Version: 0.1.0
  * Author: Gary Smith Marketing, LLC
  * License: GPL-2.0-or-later
  * Text Domain: password-reset-guard
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants.
-define( 'PRG_VERSION', '1.0.0' );
+define( 'PRG_VERSION', '0.1.0' );
 define( 'PRG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PRG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
