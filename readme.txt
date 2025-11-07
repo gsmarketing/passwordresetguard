@@ -5,7 +5,7 @@ Tags: captcha, password-reset, security, spam-protection, bot-protection
 Requires at least: 4.9
 Requires PHP: 5.6
 Tested up to: 6.8
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -122,13 +122,18 @@ Visit the GitHub repository and open an issue with:
 
 = Changelog =
 
+= 0.1.2 =
+* Security: Implement proper nonce sanitization with wp_unslash() before verification
+* Refactor: Remove phpcs ignore comments in favor of clear documentation
+* Code quality: Add detailed comments explaining security-critical code paths
+* Improve: Document why certain nonce checks are not needed in page detection
+
 = 0.1.1 =
 * Security: Add nonce verification to CAPTCHA form (WordPress security best practices)
 * Security: Implement proper input sanitization with wp_unslash() before sanitization
 * Security: Remove deprecated load_plugin_textdomain() (automatic on WordPress.org)
 * Fix: Add sanitization callbacks to register_setting() for all plugin options
 * Compatibility: Update "Tested up to" to WordPress 6.8
-* Code quality: Add phpcs comments for intentional security checks in page detection
 
 = 0.1.0 =
 * Initial release
