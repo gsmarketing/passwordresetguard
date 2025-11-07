@@ -92,7 +92,7 @@ jobs:
       - name: Create ZIP archive
         run: |
           cd build
-          zip -r password-reset-guard.zip ../password-reset-guard
+          zip -r password-reset-guard.zip password-reset-guard/
           ls -lh password-reset-guard.zip
 
       - name: Create GitHub Release
