@@ -13,7 +13,7 @@ Lightweight CAPTCHA-esque protection against password reset spam and bot attacks
 
 == Description ==
 
-Password Reset Guard is a lightweight WordPress plugin that protects your site from password reset spam attacks using a simple native math CAPTCHA like feature.
+Password Reset Guard protects your WordPress site from password reset spam attacks using a native math CAPTCHA. It's designed to be simple, effective, and focused entirely on this single purpose.
 
 Attackers use bots to flood WordPress sites with hundreds of password reset requests, which can:
 - Overload your email server
@@ -23,22 +23,23 @@ Attackers use bots to flood WordPress sites with hundreds of password reset requ
 
 Password Reset Guard stops these attacks with a simple human verification that:
 - **Stops automated bots** - They can't solve math problems
-- **Doesn't require third-party services** - No reCAPTCHA or external calls
-- **Works instantly** - No delays or verification emails
-- **Minimal overhead** - Pure PHP/JavaScript, no bloat
+- **No third-party dependencies** - No reCAPTCHA, external APIs, or cloud services
+- **Works instantly** - No delays or verification emails required
+- **Built for WordPress** - Follows WordPress security and coding standards
 
-When a user visits the password reset page, they see a simple math problem (e.g., "7 + 23 = ?"). They must solve it correctly to proceed. That's it. Simple. Effective. Lightweight.
+When a user visits the password reset page, they see a simple math problem (e.g., "7 + 23 = ?"). They must solve it correctly to proceed. That's it—simple, effective, and secure.
 
 = Features =
 
-- **Lightweight** - Less than 10 KB of code, zero dependencies
+- **Purpose-Built** - Focused solely on protecting password reset forms
+- **Zero Dependencies** - No external services, APIs, or third-party dependencies
 - **Native Math CAPTCHA** - Simple addition, subtraction, and multiplication
-- **Easy to Use** - Just solve a quick math problem
 - **Configurable** - Three difficulty levels (Easy, Medium, Hard)
-- **No Database** - Uses WordPress options, no extra tables
+- **No Database** - Uses WordPress options API, no custom tables
 - **Accessible** - Works with screen readers and keyboard navigation
 - **Mobile Friendly** - Responsive design on all devices
-- **Privacy Focused** - No third-party services or tracking
+- **Privacy Focused** - No tracking, no data collection beyond form validation
+- **WordPress Standards** - Follows WordPress coding standards and security best practices
 
 = Installation =
 
@@ -107,7 +108,7 @@ Password Reset Guard hooks into WordPress's standard password reset process. Cus
 
 = Will this slow down my site? =
 
-No. The plugin is lightweight (~10 KB) and only loads on the password reset page when CAPTCHA is enabled. Regular page loads have minimal overhead.
+No. Password Reset Guard is designed for minimal impact. It only loads on the password reset page when enabled, and uses simple server-side validation without external API calls. Regular page loads are unaffected.
 
 = Does this collect user data? =
 
