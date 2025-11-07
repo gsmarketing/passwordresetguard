@@ -5,7 +5,7 @@ Tags: captcha, password-reset, security, spam-protection, bot-protection
 Requires at least: 4.9
 Requires PHP: 5.6
 Tested up to: 6.8
-Stable tag: 0.1.2
+Stable tag: 0.1.3
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -123,11 +123,17 @@ Visit the GitHub repository and open an issue with:
 
 = Changelog =
 
+= 0.1.3 =
+* Refactor: Remove is_password_reset_page() method entirely
+* Code quality: Use WordPress native hooks (lostpassword_form, lostpassword_post) directly
+* Improve: Eliminate unnecessary page detection logic, reducing code complexity and security concerns
+* Note: Simplified from 392 to 351 lines of code by using WordPress's built-in hook context awareness
+
 = 0.1.2 =
 * Security: Implement proper nonce sanitization with wp_unslash() before wp_verify_nonce()
-* Code quality: Add justification comments for intentional phpcs ignores
-* Improve: Document page detection logic that doesn't require nonce verification
-* Note: Page context detection in is_password_reset_page() only checks for WordPress form field presence, actual security validation happens in validate_captcha()
+* Code quality: Add proper documentation and justification for security-related code paths
+* Compatibility: Update "Tested up to" to WordPress 6.8
+* Enhancement: Remove deprecated load_plugin_textdomain() call
 
 = 0.1.1 =
 * Security: Add nonce verification to CAPTCHA form (WordPress security best practices)

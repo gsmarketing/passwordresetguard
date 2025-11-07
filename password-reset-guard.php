@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Password Reset Guard
  * Description: Lightweight CAPTCHA-esque protection against password reset spam and bot attacks
- * Version: 0.1.2
+ * Version: 0.1.3
  * Author: Gary Smith Marketing, LLC
  * License: GPL-2.0-or-later
  * Text Domain: password-reset-guard
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Define plugin constants.
-define( 'PRG_VERSION', '0.1.2' );
+define( 'PRG_VERSION', '0.1.3' );
 define( 'PRG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PRG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
@@ -30,14 +30,14 @@ require_once PRG_PLUGIN_DIR . 'includes/helpers.php';
 class Password_Reset_Guard {
 
 	/**
-	 * Constructor - Initialize only essential hooks
+	 * Constructor - Initialize hooks
 	 *
-	 * We only register:
-	 * 1. Text domain loading (needed everywhere for i18n)
-	 * 2. Conditional hook loading based on page context
+	 * Conditionally loads:
+	 * 1. Admin hooks (if in WordPress admin)
+	 * 2. Password reset hooks (if CAPTCHA is enabled)
 	 *
-	 * Admin/frontend-specific hooks are loaded conditionally
-	 * to avoid unnecessary processing on regular page loads.
+	 * The lostpassword_form and lostpassword_post hooks are WordPress-native
+	 * and only fire in the password reset context, so we don't need page detection.
 	 */
 	public function __construct() {
 		// Only load admin hooks if we're in admin.
@@ -52,23 +52,12 @@ class Password_Reset_Guard {
 			return;
 		}
 
-		// Hook into login_init (fires early on login page) to register password reset hooks.
-		add_action( 'login_init', array( $this, 'register_password_reset_hooks' ) );
-	}
-
-	/**
-	 * Register password reset hooks at the right time
-	 *
-	 * Called via login_init hook, which fires early on the login page.
-	 * This ensures hooks are registered before the form is rendered.
-	 */
-	public function register_password_reset_hooks() {
-		if ( $this->is_password_reset_page() ) {
-			add_action( 'login_enqueue_scripts', array( $this, 'enqueue_captcha_styles' ) );
-			// Use action hook, not filter - lostpassword_form is do_action, not apply_filters
-			add_action( 'lostpassword_form', array( $this, 'output_captcha_field' ) );
-			add_filter( 'lostpassword_post', array( $this, 'validate_captcha' ), 10, 2 );
-		}
+		// Register password reset hooks - these only fire in the lost password context.
+		// lostpassword_form is a WordPress action hook that fires when rendering the lost password form.
+		// lostpassword_post is a WordPress filter hook that fires when processing the form submission.
+		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_captcha_styles' ) );
+		add_action( 'lostpassword_form', array( $this, 'output_captcha_field' ) );
+		add_filter( 'lostpassword_post', array( $this, 'validate_captcha' ), 10, 2 );
 	}
 
 	/**
@@ -303,40 +292,6 @@ class Password_Reset_Guard {
 	 */
 	private function is_captcha_enabled() {
 		return (bool) get_option( 'prg_enable_captcha', 1 );
-	}
-
-	/**
-	 * Check if we're on the password reset page
-	 *
-	 * Detects both the lost password form page and the reset submission handler.
-	 * This prevents unnecessary hook loading on regular pages.
-	 *
-	 * Note: Nonce verification is NOT required here because we're only detecting
-	 * the page context for conditional hook loading, not processing user input.
-	 * Actual CAPTCHA validation (which requires nonce verification) happens in
-	 * validate_captcha() which is only called when this method returns true.
-	 *
-	 * @return bool True on password reset page, false otherwise.
-	 */
-	private function is_password_reset_page() {
-		// Check if we're on the lost password page via URL parameter.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		// No nonce needed - this is just page context detection via URL, not form processing.
-		// We're not taking action on this data, just determining if we should load CAPTCHA hooks.
-		if ( isset( $_GET['action'] ) && 'lostpassword' === sanitize_key( $_GET['action'] ) ) {
-			return true;
-		}
-
-		// Check if we're processing a password reset form submission.
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		// No nonce needed - this is just page context detection, not form processing.
-		// We're only checking for the presence of WordPress's built-in form fields
-		// to detect the password reset page. Actual nonce verification happens in validate_captcha().
-		if ( isset( $_POST['wp-submit'] ) && isset( $_POST['user_login'] ) ) {
-			return true;
-		}
-
-		return false;
 	}
 
 	/**
