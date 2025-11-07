@@ -2,20 +2,52 @@ name: Build and Release Plugin
 
 on:
   push:
-    tags:
-      - 'v*'  # Triggers on any tag starting with 'v' (e.g., v0.1.0, v1.0.0)
+    branches:
+      - main  # Trigger on pushes to main branch
 
 jobs:
+  check-release:
+    runs-on: ubuntu-latest
+    outputs:
+      should_release: ${{ steps.check.outputs.should_release }}
+      version: ${{ steps.check.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for @release keyword
+        id: check
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          if [[ "$COMMIT_MSG" == *"@release"* ]]; then
+            echo "should_release=true" >> $GITHUB_OUTPUT
+            # Extract version from plugin file if available
+            VERSION=$(grep "PRG_VERSION" password-reset-guard.php | grep "define" | head -1 | sed "s/.*'\([^']*\)'.*/\1/")
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            echo "Releasing version: $VERSION"
+          else
+            echo "should_release=false" >> $GITHUB_OUTPUT
+          fi
+
   build-and-release:
+    needs: check-release
+    if: needs.check-release.outputs.should_release == 'true'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get version from tag
+      - name: Get version
         id: get_version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        run: |
+          VERSION=${{ needs.check-release.outputs.version }}
+          if [ -z "$VERSION" ]; then
+            VERSION=$(grep "PRG_VERSION" password-reset-guard.php | grep "define" | head -1 | sed "s/.*'\([^']*\)'.*/\1/")
+          fi
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Create build directory
         run: |
@@ -40,6 +72,9 @@ jobs:
           rm -rf password-reset-guard/CLAUDE.md
           rm -rf password-reset-guard/package.json
           rm -rf password-reset-guard/package-lock.json
+          rm -rf password-reset-guard/docker-compose.yml
+          rm -rf password-reset-guard/.env.example
+          rm -rf password-reset-guard/DOCKER_DEV.md
 
           # Keep what matters for users
           # - password-reset-guard.php (main plugin)
