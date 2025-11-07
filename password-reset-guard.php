@@ -13,27 +13,51 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Define plugin constants.
 define( 'PRG_VERSION', '1.0.0' );
 define( 'PRG_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'PRG_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 
 /**
- * Main Plugin Class
+ * Password Reset Guard - Main Plugin Class
+ *
+ * Lightweight CAPTCHA protection with smart hook initialization.
+ * Hooks are only loaded when needed (admin or password reset page).
  */
 class Password_Reset_Guard {
 
 	/**
-	 * Constructor
+	 * Constructor - Initialize only essential hooks
+	 *
+	 * We only register:
+	 * 1. Text domain loading (needed everywhere for i18n)
+	 * 2. Conditional hook loading based on page context
+	 *
+	 * Admin/frontend-specific hooks are loaded conditionally
+	 * to avoid unnecessary processing on regular page loads.
 	 */
 	public function __construct() {
+		// Load text domain early for i18n support.
 		add_action( 'init', array( $this, 'load_textdomain' ) );
-		add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
-		add_action( 'admin_init', array( $this, 'register_settings' ) );
-		add_action( 'login_form_lostpassword', array( $this, 'enqueue_captcha_scripts' ) );
-		add_action( 'login_enqueue_scripts', array( $this, 'enqueue_captcha_styles' ) );
-		add_filter( 'lostpassword_form', array( $this, 'add_captcha_field' ) );
-		add_filter( 'lostpassword_post', array( $this, 'validate_captcha' ), 10, 2 );
-		add_filter( 'wp_lostpassword_errors', array( $this, 'handle_captcha_error' ), 10, 1 );
+
+		// Only load admin hooks if we're in admin.
+		if ( is_admin() ) {
+			add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
+			add_action( 'admin_init', array( $this, 'register_settings' ) );
+			return;
+		}
+
+		// Only load frontend hooks if CAPTCHA is enabled.
+		if ( ! $this->is_captcha_enabled() ) {
+			return;
+		}
+
+		// Only load password reset hooks on password reset pages.
+		if ( $this->is_password_reset_page() ) {
+			add_action( 'login_enqueue_scripts', array( $this, 'enqueue_captcha_styles' ) );
+			add_filter( 'lostpassword_form', array( $this, 'add_captcha_field' ) );
+			add_filter( 'lostpassword_post', array( $this, 'validate_captcha' ), 10, 2 );
+		}
 	}
 
 	/**
@@ -139,28 +163,11 @@ class Password_Reset_Guard {
 	}
 
 	/**
-	 * Enqueue captcha scripts on password reset page
-	 */
-	public function enqueue_captcha_scripts() {
-		if ( ! $this->is_captcha_enabled() ) {
-			return;
-		}
-		wp_enqueue_script(
-			'prg-captcha',
-			PRG_PLUGIN_URL . 'assets/js/captcha.js',
-			array(),
-			PRG_VERSION,
-			true
-		);
-	}
-
-	/**
 	 * Enqueue captcha styles on login page
+	 *
+	 * Only called on password reset page (via conditional hook loading).
 	 */
 	public function enqueue_captcha_styles() {
-		if ( ! $this->is_captcha_enabled() ) {
-			return;
-		}
 		wp_enqueue_style(
 			'prg-captcha',
 			PRG_PLUGIN_URL . 'assets/css/captcha.css',
@@ -229,10 +236,34 @@ class Password_Reset_Guard {
 	}
 
 	/**
-	 * Handle captcha error display
+	 * Check if CAPTCHA is enabled
+	 *
+	 * @return bool True if CAPTCHA is enabled, false otherwise.
 	 */
-	public function handle_captcha_error( $errors ) {
-		return $errors;
+	private function is_captcha_enabled() {
+		return (bool) get_option( 'prg_enable_captcha', 1 );
+	}
+
+	/**
+	 * Check if we're on the password reset page
+	 *
+	 * Detects both the lost password form page and the reset submission handler.
+	 * This prevents unnecessary hook loading on regular pages.
+	 *
+	 * @return bool True if on password reset page, false otherwise.
+	 */
+	private function is_password_reset_page() {
+		// Check if we're on the lost password page.
+		if ( isset( $_GET['action'] ) && 'lostpassword' === $_GET['action'] ) {
+			return true;
+		}
+
+		// Check if we're processing a password reset form submission.
+		if ( isset( $_POST['wp-submit'] ) && isset( $_POST['user_login'] ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -286,14 +317,7 @@ class Password_Reset_Guard {
 				return 0;
 		}
 	}
-
-	/**
-	 * Check if captcha is enabled
-	 */
-	private function is_captcha_enabled() {
-		return (bool) get_option( 'prg_enable_captcha', 1 );
-	}
 }
 
-// Initialize plugin
+// Initialize the plugin.
 new Password_Reset_Guard();

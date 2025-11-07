@@ -1,15 +1,28 @@
-node_modules/
+# Development & IDE
+.docs/
 .DS_Store
-*.log
 .env
 .vscode-settings.json
-dist/
-build/
-*.zip
 .idea/
 *.iml
+
+# Logs & Temporary
+*.log
 Thumbs.db
 .Thumbs.db
 *.swp
 *.swo
 *~
+
+# Build Artifacts
+dist/
+build/
+*.zip
+
+# Dependencies
+node_modules/
+
+# Cursor/IDE Rule Files (local development only)
+cursor/
+cursor-rules.md
+.cursor/
