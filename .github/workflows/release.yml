@@ -1,0 +1,69 @@
+name: Build and Release Plugin
+
+on:
+  push:
+    tags:
+      - 'v*'  # Triggers on any tag starting with 'v' (e.g., v0.1.0, v1.0.0)
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+
+      - name: Create build directory
+        run: |
+          mkdir -p build
+          mkdir -p password-reset-guard
+
+      - name: Copy plugin files (excluding unwanted folders/files)
+        run: |
+          # Copy everything
+          cp -r ./* password-reset-guard/
+
+          # Remove files/folders not needed in distribution
+          rm -rf password-reset-guard/.github
+          rm -rf password-reset-guard/.git
+          rm -rf password-reset-guard/.gitignore
+          rm -rf password-reset-guard/node_modules
+          rm -rf password-reset-guard/.docs
+          rm -rf password-reset-guard/.editorconfig
+          rm -rf password-reset-guard/.wporg-config.json
+          rm -rf password-reset-guard/phpcs.xml.dist
+          rm -rf password-reset-guard/*.code-workspace
+          rm -rf password-reset-guard/CLAUDE.md
+          rm -rf password-reset-guard/package.json
+          rm -rf password-reset-guard/package-lock.json
+
+          # Keep what matters for users
+          # - password-reset-guard.php (main plugin)
+          # - assets/ (CSS/JS)
+          # - includes/ (helpers)
+          # - languages/ (translations)
+          # - license
+          # - readme.txt
+
+      - name: Create ZIP archive
+        run: |
+          cd build
+          zip -r password-reset-guard.zip ../password-reset-guard
+          ls -lh password-reset-guard.zip
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: build/password-reset-guard.zip
+          body: |
+            ## Password Reset Guard Release ${{ steps.get_version.outputs.VERSION }}
+
+            See [CHANGELOG](readme.txt) for detailed changes.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
