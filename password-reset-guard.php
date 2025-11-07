@@ -40,9 +40,6 @@ class Password_Reset_Guard {
 	 * to avoid unnecessary processing on regular page loads.
 	 */
 	public function __construct() {
-		// Load text domain early for i18n support.
-		add_action( 'init', array( $this, 'load_textdomain' ) );
-
 		// Only load admin hooks if we're in admin.
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( $this, 'add_admin_menu' ) );
@@ -75,17 +72,6 @@ class Password_Reset_Guard {
 	}
 
 	/**
-	 * Load plugin text domain
-	 */
-	public function load_textdomain() {
-		load_plugin_textdomain(
-			'password-reset-guard',
-			false,
-			dirname( plugin_basename( __FILE__ ) ) . '/languages'
-		);
-	}
-
-	/**
 	 * Add admin menu
 	 */
 	public function add_admin_menu() {
@@ -102,8 +88,24 @@ class Password_Reset_Guard {
 	 * Register plugin settings
 	 */
 	public function register_settings() {
-		register_setting( 'password_reset_guard', 'prg_enable_captcha' );
-		register_setting( 'password_reset_guard', 'prg_difficulty' );
+		register_setting(
+			'password_reset_guard',
+			'prg_enable_captcha',
+			array(
+				'type'              => 'boolean',
+				'sanitize_callback' => array( $this, 'sanitize_enable_captcha' ),
+				'show_in_rest'      => true,
+			)
+		);
+		register_setting(
+			'password_reset_guard',
+			'prg_difficulty',
+			array(
+				'type'              => 'string',
+				'sanitize_callback' => array( $this, 'sanitize_difficulty' ),
+				'show_in_rest'      => true,
+			)
+		);
 
 		add_settings_section(
 			'prg_main',
@@ -153,6 +155,28 @@ class Password_Reset_Guard {
 		</select>
 		<p class="description"><?php esc_html_e( 'Set the difficulty of the math CAPTCHA', 'password-reset-guard' ); ?></p>
 		<?php
+	}
+
+	/**
+	 * Sanitize enable CAPTCHA setting
+	 *
+	 * @param mixed $input The input value to sanitize.
+	 * @return bool Sanitized boolean value.
+	 */
+	public function sanitize_enable_captcha( $input ) {
+		return ! empty( $input ) ? 1 : 0;
+	}
+
+	/**
+	 * Sanitize difficulty setting
+	 *
+	 * @param mixed $input The input value to sanitize.
+	 * @return string Sanitized difficulty value (easy, medium, or hard).
+	 */
+	public function sanitize_difficulty( $input ) {
+		$allowed_values = array( 'easy', 'medium', 'hard' );
+		$input          = sanitize_text_field( $input );
+		return in_array( $input, $allowed_values, true ) ? $input : 'medium';
 	}
 
 	/**

@@ -4,7 +4,7 @@ Donate link: https://github.com/gsmarketing/passwordresetguard/
 Tags: captcha, password-reset, security, spam-protection, bot-protection
 Requires at least: 4.9
 Requires PHP: 5.6
-Tested up to: 6.4
+Tested up to: 6.8
 Stable tag: 0.1.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
