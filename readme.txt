@@ -1,5 +1,5 @@
 === Password Reset Guard ===
-Contributors: gsmarketing
+Contributors: GSmith84
 Donate link: https://github.com/gsmarketing/passwordresetguard/
 Tags: captcha, password-reset, security, spam-protection, bot-protection
 Requires at least: 4.9
