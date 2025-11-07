@@ -1,0 +1,29 @@
+{
+  "name": "password-reset-guard",
+  "version": "1.0.0",
+  "description": "Lightweight WordPress plugin that protects your site from password reset spam and bot attacks using a simple native math CAPTCHA",
+  "main": "password-reset-guard.php",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/password-reset-guard.git"
+  },
+  "scripts": {
+    "build": "echo \"No build step required for this plugin\"",
+    "test": "echo \"No tests configured yet\""
+  },
+  "keywords": [
+    "wordpress",
+    "plugin",
+    "captcha",
+    "password-reset",
+    "security",
+    "spam-protection",
+    "bot-protection"
+  ],
+  "author": "Your Name",
+  "license": "GPL-2.0-or-later",
+  "engines": {
+    "node": ">=12.0.0",
+    "wordpress": ">=4.9"
+  }
+}
